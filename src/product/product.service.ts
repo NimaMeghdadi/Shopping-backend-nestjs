@@ -18,43 +18,44 @@ export class ProductService {
     numberOfEntity: number,
     description: string,
     imgUrls: Array<string>,
-    kind: typeof KIND   ,
-    imgUrl:string
+    kind: typeof KIND,
+    imgUrl: string,
   ): Promise<string> {
     const newProduct = new this.productModel({
-        name,
-        expirationDate,
-        productionDate,
-        price,
-        numberOfEntity,
-        description,
-        imgUrls,
-        kind,
-        imgUrl,
+      name,
+      expirationDate,
+      productionDate,
+      price,
+      numberOfEntity,
+      description,
+      imgUrls,
+      kind,
+      imgUrl,
     });
     const result = await newProduct.save();
     return result.id as string;
   }
 
-    async getAllProducts() {
-    const products = await this.productModel.find().exec();
+  async getAllProducts(model, sort) {
+    let products = null;
+    products = await this.productModel.find(model).sort(sort).exec();
     return products;
-    }
+  }
 
-    async getSingleProduct(productID) {
+  async getSingleProduct(productID) {
     const product = await this.productModel.findById(productID);
     return product;
-    }
+  }
 
-    async deleteProduct(productID) {
+  async deleteProduct(productID) {
     const result = await this.productModel.deleteOne({ _id: productID }).exec();
     // if (result === '0') {
     //   throw new NotFoundException('Could not find Product.');
     // }
-    }
+  }
 
   async updateProduct(
-    _id:string,
+    _id: string,
     name: string,
     expirationDate: string,
     productionDate: string,
@@ -62,8 +63,8 @@ export class ProductService {
     numberOfEntity: number,
     description: string,
     imgUrls: Array<string>,
-    kind: typeof KIND ,
-    imgUrl:string,
+    kind: typeof KIND,
+    imgUrl: string,
   ) {
     const updatedProduct = await this.getSingleProduct(_id);
     if (name) {
@@ -87,12 +88,12 @@ export class ProductService {
     if (imgUrls) {
       updatedProduct.imgUrls = imgUrls;
     }
-    if (kind){
-      updatedProduct. kind =  kind;
+    if (kind) {
+      updatedProduct.kind = kind;
     }
-    if (imgUrl){
-        updatedProduct. imgUrl=  imgUrl;
-      }
+    if (imgUrl) {
+      updatedProduct.imgUrl = imgUrl;
+    }
     updatedProduct.save();
   }
 
@@ -111,5 +112,15 @@ export class ProductService {
 
   private async hashPassword(password: string, salt: string): Promise<string> {
     return bcrypt.hash(password, salt);
+  }
+
+  async getProductSearchData() {
+    const result = await this.productModel.aggregate([
+      {
+        $group: { _id: null, max: { $max: '$price' } },
+      },
+    ]);
+    let maxPrice = result[0].max;
+    return { maxPrice: maxPrice };
   }
 }
