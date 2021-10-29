@@ -6,15 +6,15 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post("/adduser")
+  @Post('/adduser')
   async addUser(
     @Body('fName') fName: string,
     @Body('lName') lName: string,
@@ -34,10 +34,46 @@ export class UserController {
       phone,
       email,
       imgURL,
-      );
+    );
     return { id: generatedId };
   }
 
+  @Post('/addcard')
+  async addcard(
+    @Body('userID') userID: string,
+    @Body('status') status: string,
+    @Body('address') address: string,
+    @Body('totalPrice') totalPrice: number,
+    @Body('arrivalDate') arrivalDate: string,
+    @Body('description') description: string,
+    @Body('createCardDate') createCardDate: string,
+    @Body('productIDs') productIDs: string[],
+  ) {
+    const result = await this.userService.insertCardToUser(
+      userID,
+      status,
+      address,
+      totalPrice,
+      arrivalDate,
+      description,
+      createCardDate,
+      productIDs,
+    );
+    return result;
+  }
+
+  @Get('getcards')
+  async getUserCards(@Query() query) {
+    const { userID } = query;
+    const Cards = await this.userService.findAllUserCards(userID);
+    // let newCards = [];
+    // Cards.forEach(async (item) => {
+    //   newCards.push(await this.userService.test(item))
+    //   console.log(newCards);
+      
+    // })
+    return Cards;
+  }
   @Get(':id')
   async getSingleUser(@Param('id') userID: string) {
     const User = await this.userService.getSingleUser(userID);

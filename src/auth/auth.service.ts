@@ -42,8 +42,8 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('invalid credential !');
     }
-    const { username, roleID, phone, email } = user[0];
-    const payload: JwtPayload = { username, roleID, phone, email };
+    const { username, roleID, phone, email , id} = user[0];
+    const payload: JwtPayload = { username, roleID, phone, email , id };
     const accessToken = await this.jwtService.sign(payload);
     return { accessToken };
   }

@@ -24,7 +24,7 @@ export class ProductController {
     @Body('numberOfEntity') numberOfEntity: number,
     @Body('description') description: string,
     @Body('imgUrls') imgUrls: string[],
-    @Body('kind') kind: typeof KIND,
+    @Body('category') kind: typeof KIND,
     @Body('imgUrl') imgUrl: string,
   ) {
     const generatedId = await this.productService.insertProduct(
