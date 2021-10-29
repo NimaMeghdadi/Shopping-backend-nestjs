@@ -14,6 +14,7 @@ export interface JwtPayload {
   roleID: number;
   phone: string;
   email: string;
+  id: string;
 }
 
 export interface GetUserDTO {
