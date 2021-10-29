@@ -10,6 +10,7 @@ export const UserSchema = new mongoose.Schema({
   roleID: { type: Number, required: true }, // 1. Admin  2. Employee  3. Customer
   salt: { type: String, required: true },
   imgUrl: { type: String, required: false },
+  cards: [{ type: Object, required: false }],
   prodcuts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
 });
 
